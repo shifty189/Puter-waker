@@ -1,3 +1,5 @@
+# this program is designed to work in windows to produce "Magic Packets" to wake devices over the LAN
+
 from wakeonlan import send_magic_packet
 from tkinter import messagebox
 import tkinter as tk
