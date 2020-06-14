@@ -1,5 +1,3 @@
-# reference https://pypi.org/project/wakeonlan/
-
 from wakeonlan import send_magic_packet
 from tkinter import messagebox
 import tkinter as tk
