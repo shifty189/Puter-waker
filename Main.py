@@ -8,7 +8,7 @@ import os
 
 
 def arp():
-    var = [] = []
+    var = []
     ArpLabels = []
     ArpButton = []
     macs = []
