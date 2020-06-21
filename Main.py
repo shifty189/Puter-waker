@@ -1,5 +1,6 @@
-#This is my take on a Windows based WOL (Wake On Lan) program
-# Press the Arp Table button to see a list of mac address your computer has in its Arp tables currently
+# This is my take on a Windows based WOL (Wake On Lan) program
+# Press the "Display current ARP table" button to see a list of mac address your computer has in its Arp tables currently
+# from that window you can send a WOL packet to any of the listed devices
 
 from wakeonlan import send_magic_packet
 from tkinter import messagebox
@@ -7,39 +8,46 @@ import tkinter as tk
 import os
 
 
+# arp function creates a new window showing all known MAC address on client computer
 def arp():
     var = []
     ArpLabels = []
     ArpButton = []
     macs = []
+    # os.popen allows you to work the windows command line, "as a" lets us take the return and store it by line in a list
     with os.popen("arp -a") as a:
         arpData = a.readlines()
 
+    # use tkinter to make the gui main window
     arp_window = tk.Tk(screenName="Current Arp Table")
     arp_window.title("Current Arp Table")
 
+    # loop threw the arp -a return leave out the first blank line, then put the rest in another list (needs work here)
     for i, a in enumerate(arpData):
         if i > 0:
             var.append(a)
+    # go threw each line and extract the MAC from the line and store it in a new list. if no MAC on the line new list gets ' '
     for i, data in enumerate(var):
         try:
             start = data.find("-") - 2
             macs.append(data[start:start + 17:1])
         except TypeError:
             macs.append(' ')
+    # for each MAC address make a label and button to wake device
     for i, data in enumerate(macs):
-        d = data
+        #d = data
         if i > 0:
             if i < 17:
                 ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
+                # This buttons function needed 2 lambdas or else it would always call wake() with the lst MAC in the list
                 ArpButton.append(tk.Button(arp_window, text="Wake! " + str(i),
                                            command=(lambda num = i:lambda:wake(macs[num]))()
                                            ).grid(row=i, column=1))
 
-            else:
+            elif i > 16:
                 ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i - 17, column=3))
                 ArpButton.append(tk.Button(arp_window, text="Wake!",
-                                           command=lambda: wake(data[macs[int(i)]:macs[int(i)] + 17:1])
+                                           command=(lambda num = i:lambda:wake(macs[num]))()
                                            ).grid(row=i - 17, column=4))
         else:
             ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
