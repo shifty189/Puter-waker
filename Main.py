@@ -1,3 +1,6 @@
+#This is my take on a Windows based WOL (Wake On Lan) program
+# Press the Arp Table button to see a list of mac address your computer has in its Arp tables currently
+
 from wakeonlan import send_magic_packet
 from tkinter import messagebox
 import tkinter as tk
