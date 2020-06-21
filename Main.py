@@ -7,6 +7,10 @@ import os
 # import re
 
 
+def get_index(x):
+    return x
+
+
 def arp():
     var = []
     ArpLabels = []
@@ -28,13 +32,17 @@ def arp():
             macs.append(data[start:start + 17:1])
         except TypeError:
             macs.append(' ')
+    for i, data in enumerate(macs):
+        d = data
+        # lambda: num = i
+        # lambda num: num
         if i > 0:
             if i < 17:
                 ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
                 ArpButton.append(tk.Button(arp_window, text="Wake! " + str(i),
-                                           command=lambda: wake(macs[i])
+                                           command=(lambda num = i:lambda:wake(macs[num]))()
                                            ).grid(row=i, column=1))
-                print(macs[i] + " Sent")
+                print(d + " Sent")
             else:
                 ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i - 17, column=3))
                 ArpButton.append(tk.Button(arp_window, text="Wake!",
@@ -70,8 +78,14 @@ main.title('Puter Waker 1.1')
 
 describe_lab = tk.Label(main, text="Enter the MAC address of the computer you want to wake").grid(row=0, columnspan=2)
 mac_text = tk.StringVar()
+# mac_text.set(" ")
 mac_entry = tk.Label(main, text="Mac Address:").grid(row=1, column=0)
 mac_input = tk.Entry(main, textvariable=mac_text).grid(row=1, column=1)
+#or_label = tk.Label(main, text="or").grid(row=2, columnspan=2)
+#ip_text = tk.StringVar()
+#ip_text.set("Not working just yet")
+#ip_entry = tk.Label(main, text="IP Address", textvariable= ip_text).grid(row=3, column=0)
+#ip_input = tk.Entry(main).grid(row=3, column=1)
 enter_button = tk.Button(main, text="Wake!", command=lambda: wake(mac_text.get())).grid(row=4, columnspan=2)
 arp_button = tk.Button(main, text="Display current ARP table", command=arp).grid(row=5, columnspan=2)
 
