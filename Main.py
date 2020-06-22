@@ -36,6 +36,7 @@ def arp():
                     IPs.append(data[2:ip_end:1])
                     print(IPs[i])
                 except:
+                    # This variable means nothing, i just needed something to put under except
                     yesll = 23
                 try:
                     start = data.find("-") - 2
@@ -43,11 +44,9 @@ def arp():
                 except TypeError:
                     macs.append(' ')
         except ValueError:
-            # sdfasd = 3
             macs.append(' ')
             IPs.append(' ')
         except IndexError:
-            # laksjdfl = 3
             macs.append(' ')
             IPs.append(' ')
     # for each MAC address make a label and button to wake device
@@ -57,13 +56,13 @@ def arp():
                 ArpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i, column=0))
                 # This buttons function needed 2 lambdas or else it would always call wake() with the lst MAC in the list
                 ArpButton.append(tk.Button(arp_window, text="Wake! " + str(i),
-                                           command=(lambda num = i:lambda:wake(macs[num]))()
+                                           command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i, column=1))
 
             elif i > 16:
                 ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i - 17, column=3))
                 ArpButton.append(tk.Button(arp_window, text="Wake!",
-                                           command=(lambda num = i:lambda:wake(macs[num]))()
+                                           command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i - 17, column=4))
         else:
             ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
