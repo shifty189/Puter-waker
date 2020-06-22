@@ -52,7 +52,7 @@ def arp():
             IPs.append(' ')
     # for each MAC address make a label and button to wake device
     for i, data in enumerate(macs):
-        if i > 0 and data[0] != " ":
+        if data[0] != " ":
             if i < 17:
                 ArpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i, column=0))
                 # This buttons function needed 2 lambdas or else it would always call wake() with the lst MAC in the list
