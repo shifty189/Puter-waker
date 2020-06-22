@@ -55,7 +55,7 @@ def arp():
             if i < 17:
                 ArpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i, column=0))
                 # This buttons function needed 2 lambdas or else it would always call wake() with the lst MAC in the list
-                ArpButton.append(tk.Button(arp_window, text="Wake! " + str(i),
+                ArpButton.append(tk.Button(arp_window, text="Wake! ",
                                            command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i, column=1))
 
