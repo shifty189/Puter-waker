@@ -60,7 +60,7 @@ def arp():
                                            ).grid(row=i, column=1))
 
             elif i > 16:
-                ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i - 17, column=3))
+                ArpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i - 17, column=3))
                 ArpButton.append(tk.Button(arp_window, text="Wake!",
                                            command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i - 17, column=4))
@@ -79,7 +79,7 @@ def wake(x):
 
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 1.3')
+main.title('Puter Waker 1.4')
 
 describe_lab = tk.Label(main, text="Enter the MAC address of the computer you want to wake").grid(row=0, columnspan=2)
 mac_text = tk.StringVar()
