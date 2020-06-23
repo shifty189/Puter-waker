@@ -67,7 +67,7 @@ def arp():
         else:
             ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
 
-
+# function that actually sends the Magic Packet
 def wake(x):
     try:
         send_magic_packet(x)
