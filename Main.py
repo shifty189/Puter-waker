@@ -9,11 +9,14 @@ import os
 
 global path
 # arp function creates a new window showing all known MAC address on client computer
+
+
 def arp():
+    global arp_window
     var = []
-    ArpLabels = []
-    ArpButton = []
-    SaveButton = []
+    arpLabels = []
+    arpButton = []
+    saveButton = []
     macs = []
     IPs = []
     # os.popen allows you to work the windows command line, "as a" lets us take the return and store it by line in a list
@@ -54,25 +57,25 @@ def arp():
     for i, data in enumerate(macs):
         if data[0] != " ":
             if i < 17:
-                ArpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i, column=0))
+                arpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i, column=0))
                 # These button functions needed 2 lambdas or else it would always call there function with the lst MAC in the list
-                ArpButton.append(tk.Button(arp_window, text="Wake! ",
+                arpButton.append(tk.Button(arp_window, text="Wake! ",
                                            command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i, column=1))
-                SaveButton.append(tk.Button(arp_window, text="Save ",
+                saveButton.append(tk.Button(arp_window, text="Save ",
                                            command=(lambda num=i: lambda: save(macs[num]))()
                                            ).grid(row=i, column=2))
 
             elif i > 16:
-                ArpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i - 17, column=3))
-                ArpButton.append(tk.Button(arp_window, text="Wake!",
+                arpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i - 17, column=3))
+                arpButton.append(tk.Button(arp_window, text="Wake!",
                                            command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i - 17, column=4))
-                SaveButton.append(tk.Button(arp_window, text="Save ",
+                saveButton.append(tk.Button(arp_window, text="Save ",
                                             command=(lambda num=i: lambda: save(macs[num]))()
                                             ).grid(row=i, column=5))
         else:
-            ArpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
+            arpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
 
 
 def wake(x):
@@ -83,9 +86,11 @@ def wake(x):
         messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
     except:
         print('something went wrong')
+    arp_window.destroy()
 
 def save(x):
     global path
+    global arp_window
     if os.path.exists(path + "\Documents\Puter Waker\Saved.txt") == False:
         file = open(path + "\Documents\Puter Waker\Saved.txt", "w")
         saveTemp = []
@@ -95,9 +100,11 @@ def save(x):
     file.write(x + "\n")
     tk.messagebox.showinfo(title="Saved", message=x + " Was saved")
     file.close()
+    arp_window.destroy()
 
 def savedMacs():
     global path
+    global savedWindow
     savedLabel = []
     wakeButton = []
     if os.path.exists(path + "\Documents\Puter Waker\Saved.txt") == False:
@@ -114,22 +121,26 @@ def savedMacs():
         if x.find("\n") != -1:
             savedLabel.append(tk.Label(savedWindow, text=x).grid(row=i + 1, column=0))
             wakeButton.append(tk.Button(savedWindow, text="Wake! ",
-                                           command=(lambda num = i: lambda: wake(x))()
+                                           command=(lambda num=i, mac=x: lambda: wake(mac))()
                                            ).grid(row=i + 1, column=1))
 
 
 def deleteSaved():
     global path
+    global savedWindow
     file = open(path + "\Documents\Puter Waker\Saved.txt", "w")
     file.close()
     tk.messagebox.showinfo(title="deleted", message="Saved messages have been deleted")
+    savedWindow.destroy()
 
+
+# noinspection PyRedeclaration
 path = os.path.expanduser("~")
 if os.path.exists(path + "\Documents\Puter Waker") == False:
     os.makedirs(path + "\Documents\Puter Waker")
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 1.5')
+main.title('Puter Waker 1.6')
 
 # print(os.path.expanduser("~"))
 
