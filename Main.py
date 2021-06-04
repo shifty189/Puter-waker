@@ -79,6 +79,8 @@ def arp():
 
 
 def wake(x):
+    global savedWindow
+    global arp_window
     print(x)
     try:
         messagebox.showinfo(title="Wake sent", message="WOL sent to " + x)
@@ -89,7 +91,7 @@ def wake(x):
 
     try:
         arp_window.destroy()
-    except NameError:
+    except:
         err = 9
 
     try:
@@ -110,7 +112,10 @@ def save(x):
     file.write(x + "\n")
     tk.messagebox.showinfo(title="Saved", message=x + " Was saved")
     file.close()
-    arp_window.destroy()
+    try:
+        arp_window.destroy()
+    except:
+        err = 8
 
 def savedMacs():
     global path
@@ -126,6 +131,7 @@ def savedMacs():
     file.close()
     savedWindow = tk.Tk(screenName="Saved Devices")
     clearSaved = tk.Button(savedWindow, text="Clear saved list", command=deleteSaved).grid(row=0, column=0)
+
 
     for i, x in enumerate(temp):
         if x.find("\n") != -1:
@@ -151,7 +157,7 @@ if os.path.exists(path + "\Documents\Puter Waker") == False:
     os.makedirs(path + "\Documents\Puter Waker")
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 2.2')
+main.title('Puter Waker 2.3')
 
 # print(os.path.expanduser("~"))
 
