@@ -79,18 +79,28 @@ def arp():
 
 
 def wake(x):
+    print(x)
     try:
-        send_magic_packet(x)
         messagebox.showinfo(title="Wake sent", message="WOL sent to " + x)
     except ValueError:
         messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
     except:
         print('something went wrong')
-    arp_window.destroy()
+
+    try:
+        arp_window.destroy()
+    except NameError:
+        err = 9
+
+    try:
+        savedWindow.destroy()
+    except:
+        err = 9
 
 def save(x):
     global path
     global arp_window
+    print(x)
     if os.path.exists(path + "\Documents\Puter Waker\Saved.txt") == False:
         file = open(path + "\Documents\Puter Waker\Saved.txt", "w")
         saveTemp = []
@@ -119,9 +129,10 @@ def savedMacs():
 
     for i, x in enumerate(temp):
         if x.find("\n") != -1:
+            # print(x)
             savedLabel.append(tk.Label(savedWindow, text=x).grid(row=i + 1, column=0))
             wakeButton.append(tk.Button(savedWindow, text="Wake! ",
-                                           command=(lambda num=i, mac=x: lambda: wake(mac))()
+                                           command=(lambda num=i, mac=x: lambda: wake(x))()
                                            ).grid(row=i + 1, column=1))
 
 
@@ -140,7 +151,7 @@ if os.path.exists(path + "\Documents\Puter Waker") == False:
     os.makedirs(path + "\Documents\Puter Waker")
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 1.6')
+main.title('Puter Waker 2.2')
 
 # print(os.path.expanduser("~"))
 
