@@ -17,7 +17,7 @@ def manualSave(x):
     if re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", x.lower()):
         save(x)
     else:
-        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
+        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered :) " + x)
 
     try:
         savedWindow.destroy()
@@ -94,12 +94,13 @@ def arp():
 def wake(x):
     global savedWindow
     global arp_window
-    print(x)
+    print(len(x))
+
     try:
-        send_magic_packet(x)
+        send_magic_packet(x[0:17])
         messagebox.showinfo(title="Wake sent", message="WOL sent to " + x)
     except ValueError:
-        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
+        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered (sending)" + x)
     except:
         print('something went wrong')
 
@@ -180,7 +181,7 @@ if os.path.exists(path + "\Documents\Puter Waker") == False:
     os.makedirs(path + "\Documents\Puter Waker")
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 2.4')
+main.title('Puter Waker 2.5')
 
 # print(os.path.expanduser("~"))
 
