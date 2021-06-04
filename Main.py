@@ -96,6 +96,7 @@ def wake(x):
     global arp_window
     print(x)
     try:
+        send_magic_packet(x)
         messagebox.showinfo(title="Wake sent", message="WOL sent to " + x)
     except ValueError:
         messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
