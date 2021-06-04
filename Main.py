@@ -6,10 +6,23 @@ from wakeonlan import send_magic_packet
 from tkinter import messagebox
 import tkinter as tk
 import os
+import re
 
 global path
 # arp function creates a new window showing all known MAC address on client computer
 
+
+def manualSave(x):
+    # print(x)
+    if re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", x.lower()):
+        save(x)
+    else:
+        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
+
+    try:
+        savedWindow.destroy()
+    except:
+        err = 8
 
 def arp():
     global arp_window
@@ -116,6 +129,10 @@ def save(x):
         arp_window.destroy()
     except:
         err = 8
+    try:
+        savedWindow.destroy()
+    except:
+        erro = 8
 
 def savedMacs():
     global path
@@ -130,16 +147,21 @@ def savedMacs():
         temp = file.readlines()
     file.close()
     savedWindow = tk.Tk(screenName="Saved Devices")
-    clearSaved = tk.Button(savedWindow, text="Clear saved list", command=deleteSaved).grid(row=0, column=0)
+    clearSaved = tk.Button(savedWindow, text="Clear saved list", command=deleteSaved).grid(row=0, column=1)
+    manualEnterLabel = tk.Label(savedWindow, text="Enter MAC to be saved").grid(row=1, column=0)
+    manualEntryField = tk.Entry(savedWindow)
+    manualEntryField.insert(0, 'not working yet')
+    manualEntryField.grid(row=1, column=1)
+    manualEntryButton = tk.Button(savedWindow, text="Save", command=lambda: manualSave(manualEntryField.get())).grid(row=1, column=2)
 
 
     for i, x in enumerate(temp):
         if x.find("\n") != -1:
             # print(x)
-            savedLabel.append(tk.Label(savedWindow, text=x).grid(row=i + 1, column=0))
+            savedLabel.append(tk.Label(savedWindow, text=x).grid(row=i + 2, column=0))
             wakeButton.append(tk.Button(savedWindow, text="Wake! ",
                                            command=(lambda num=i, mac=x: lambda: wake(x))()
-                                           ).grid(row=i + 1, column=1))
+                                           ).grid(row=i + 2, column=1))
 
 
 def deleteSaved():
@@ -157,7 +179,7 @@ if os.path.exists(path + "\Documents\Puter Waker") == False:
     os.makedirs(path + "\Documents\Puter Waker")
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 2.3')
+main.title('Puter Waker 2.4')
 
 # print(os.path.expanduser("~"))
 
