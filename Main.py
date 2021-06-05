@@ -3,7 +3,7 @@
 # from that window you can send a WOL packet to any of the listed devices
 
 from wakeonlan import send_magic_packet
-from tkinter import messagebox
+from tkinter import messagebox, END
 import tkinter as tk
 import os
 import re
@@ -12,12 +12,16 @@ global path
 # arp function creates a new window showing all known MAC address on client computer
 
 
-def manualSave(x):
-    # print(x)
+def manual_save(x, y):
+    print("Y is " + y)
     if re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", x.lower()):
-        save(x)
+        if y == '':
+            save(x)
+        else:
+            save(x + "          " + y)
     else:
-        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered :) " + x)
+        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
+
 
     try:
         savedWindow.destroy()
@@ -51,7 +55,7 @@ def arp():
                 try:
                     ip_end = data.find(" ", 3)
                     IPs.append(data[2:ip_end:1])
-                    print(IPs[i])
+                    # print(IPs[i])
                 except:
                     # This variable means nothing, i just needed something to put under except
                     yesll = 23
@@ -94,15 +98,18 @@ def arp():
 def wake(x):
     global savedWindow
     global arp_window
-    print(len(x))
+    # print(len(x))
 
     try:
         send_magic_packet(x[0:17])
-        messagebox.showinfo(title="Wake sent", message="WOL sent to " + x)
+        if len(x) > 17:
+            messagebox.showinfo(title="Wake sent", message="WOL sent to " + x[27:len(x)])
+        else:
+            messagebox.showinfo(title="Wake sent", message="WOL sent to " + x[0:17])
     except ValueError:
         messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered (sending)" + x)
-    except:
-        print('something went wrong')
+    # except:
+    #     print('something went wrong')
 
     try:
         arp_window.destroy()
@@ -115,9 +122,9 @@ def wake(x):
         err = 9
 
 def save(x):
+    # print('x = ' + x)
     global path
     global arp_window
-    print(x)
     if os.path.exists(path + "\Documents\Puter Waker\Saved.txt") == False:
         file = open(path + "\Documents\Puter Waker\Saved.txt", "w")
         saveTemp = []
@@ -152,9 +159,13 @@ def savedMacs():
     clearSaved = tk.Button(savedWindow, text="Clear saved list", command=deleteSaved).grid(row=0, column=1)
     manualEnterLabel = tk.Label(savedWindow, text="Enter MAC to be saved").grid(row=1, column=0)
     manualEntryField = tk.Entry(savedWindow)
-    manualEntryField.insert(0, 'not working yet')
+    # manualEntryField.insert(0, 'not working yet')
     manualEntryField.grid(row=1, column=1)
-    manualEntryButton = tk.Button(savedWindow, text="Save", command=lambda: manualSave(manualEntryField.get())).grid(row=1, column=2)
+    manualNameField = tk.Label(savedWindow, text="Enter name (Optional)").grid(row=1, column=2)
+    manualNameEntry = tk.Entry(savedWindow)
+    manualNameEntry.grid(row=1, column=3)
+    # userEntry = manualNameEntry.get()
+    manualEntryButton = tk.Button(savedWindow, text="Save", command=lambda: manual_save(manualEntryField.get(), manualNameEntry.get())).grid(row=1, column=4)
 
 
     for i, x in enumerate(temp):
@@ -181,9 +192,7 @@ if os.path.exists(path + "\Documents\Puter Waker") == False:
     os.makedirs(path + "\Documents\Puter Waker")
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 2.5')
-
-# print(os.path.expanduser("~"))
+main.title('Puter Waker 2.6')
 
 describe_lab = tk.Label(main, text="Enter the MAC address of the computer you want to wake").grid(row=0, columnspan=2)
 mac_text = tk.StringVar()
