@@ -36,7 +36,7 @@ def arp():
     saveButton = []
     macs = []
     IPs = []
-    # os.popen allows you to work the windows command line, "as a" lets us take the return and store it by line in a list
+# os.popen allows you to work the windows command line, "as a" lets us take the return and store it by line in a list
     with os.popen("arp -a") as a:
         arpData = a.readlines()
 
@@ -72,7 +72,7 @@ def arp():
         if data[0] != " ":
             if i < 17:
                 arpLabels.append(tk.Label(arp_window, text=IPs[i] + ":... " + data).grid(row=i, column=0))
-                # These button functions needed 2 lambdas or else it would always call there function with the lst MAC in the list
+# These button functions needed 2 lambdas or else it would always call there function with the lst MAC in the list
                 arpButton.append(tk.Button(arp_window, text="Wake! ",
                                            command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i, column=1))
@@ -115,18 +115,19 @@ def wake(x):
     except:
         pass
 
+
 def save(x):
     global path
     global arp_window
     if not os.path.exists(path + "\\Documents\\Puter Waker\\Saved.txt"):
-        file = open(path + "\\Documents\\Puter Waker\\Saved.txt", "w")
-        saveTemp = []
+        with open(path + "\\Documents\\Puter Waker\\Saved.txt", "w") as file:
+            saveTemp = []
+            file.write(x + "\n")
     else:
-        file = open(path + "\\Documents\\Puter Waker\\Saved.txt", "+r")
-        saveTemp = file.readlines()
-    file.write(x + "\n")
+        with open(path + "\\Documents\\Puter Waker\\Saved.txt", "+r") as file:
+            saveTemp = file.readlines()
+            file.write(x + "\n")
     tk.messagebox.showinfo(title="Saved", message=x + " Was saved")
-    file.close()
     try:
         arp_window.destroy()
     except:
@@ -183,11 +184,11 @@ def deleteSaved():
 
 # noinspection PyRedeclaration
 path = os.path.expanduser("~")
-if os.path.exists(path + "\\Documents\\Puter Waker") == False:
+if not os.path.exists(path + "\\Documents\\Puter Waker"):
     os.makedirs(path + "\\Documents\\Puter Waker")
 
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
-main.title('Puter Waker 2.7')
+main.title('Puter Waker 2.8')
 
 describe_lab = tk.Label(main, text="Enter the MAC address of the computer you want to wake").grid(row=0, columnspan=2)
 mac_text = tk.StringVar()
