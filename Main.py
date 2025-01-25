@@ -8,19 +8,21 @@ import tkinter as tk
 import os
 import re
 
+version = "0.01"
+buildDate = "1/24/2025"
+
 global path
 # arp function creates a new window showing all known MAC address on client computer
 
 
-def manual_save(x, y):
-    # print("Y is " + y)
-    if re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", x.lower()):
-        if y == '':
-            save(x)
+def manual_save(mac, name):
+    if re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
+        if name == '':
+            save(mac)
         else:
-            save(x + "          " + y)
+            save(mac + "          " + name)
     else:
-        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + x)
+        messagebox.showerror(title="MAC Error", message="Incorrect MAC address entered " + mac)
 
     try:
         savedWindow.destroy()
@@ -46,18 +48,18 @@ def arp():
 
     """loop threw the arp -a return leave out the first blank line, then go threw each line and extract the MAC from the 
     line + store it in a new list. if no MAC on the line new list gets ' '"""
-    for i, a in enumerate(arpData):
+    for i, line in enumerate(arpData):
         if i > 0:
             try:
-                if a[2].isnumeric():
+                if line[2].isnumeric():
                     try:
-                        ip_end = a.find(" ", 3)
-                        IPs.append(a[2:ip_end:1])
+                        ip_end = line.find(" ", 3)
+                        IPs.append(line[2:ip_end:1])
                     except:
                         pass
                     try:
-                        start = a.find("-") - 2
-                        macs.append(a[start:start + 17:1])
+                        start = line.find("-") - 2
+                        macs.append(line[start:start + 17:1])
                     except TypeError:
                         macs.append(' ')
             except ValueError:
@@ -77,7 +79,7 @@ def arp():
                                            command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i, column=1))
                 saveButton.append(tk.Button(arp_window, text="Save ",
-                                           command=(lambda num=i: lambda: save(macs[num]))()
+                                           command=(lambda num=i: lambda: savedmacs(mac=macs[num]))()
                                            ).grid(row=i, column=2))
 
             elif i > 16:
@@ -86,7 +88,7 @@ def arp():
                                            command=(lambda num = i: lambda: wake(macs[num]))()
                                            ).grid(row=i - 17, column=4))
                 saveButton.append(tk.Button(arp_window, text="Save ",
-                                            command=(lambda num=i: lambda: save(macs[num]))()
+                                            command=(lambda num=i: lambda: savedmacs(mac=macs[num]))()
                                             ).grid(row=i, column=5))
         else:
             arpLabels.append(tk.Label(arp_window, text=data).grid(row=i, column=0))
@@ -138,11 +140,13 @@ def save(x):
         pass
 
 
-def savedmacs():
+def savedmacs(mac = '', name=''):
     global path
     global savedWindow
-    savedLabel = []
-    wakeButton = []
+    
+    saved_label = []
+    wake_button = []
+    
     if not os.path.exists(path + "\\Documents\\Puter Waker\\Saved.txt"):
         with open(path + "\\Documents\\Puter Waker\\Saved.txt", "w") as file:
             temp = []
@@ -152,10 +156,19 @@ def savedmacs():
     savedWindow = tk.Tk(screenName="Saved Devices")
     clearSaved = tk.Button(savedWindow, text="Clear saved list", command=deleteSaved).grid(row=0, column=1)
     manualEnterLabel = tk.Label(savedWindow, text="Enter MAC to be saved").grid(row=1, column=0)
-    manualEntryField = tk.Entry(savedWindow)
+    if mac == '':
+        manualEntryField = tk.Entry(savedWindow)
+    else:
+        manualEntryField = tk.Entry(savedWindow)
+        manualEntryField.insert(0, mac)
+
     manualEntryField.grid(row=1, column=1)
     manualNameField = tk.Label(savedWindow, text="Enter name (Optional)").grid(row=1, column=2)
-    manualNameEntry = tk.Entry(savedWindow)
+    if name == '':
+        manualNameEntry = tk.Entry(savedWindow)
+    else:
+        manualNameEntry = tk.Entry(savedWindow)
+        manualNameEntry.insert(0,name)
     manualNameEntry.grid(row=1, column=3)
     manualEntryButton = tk.Button(savedWindow,
                                   text="Save",
@@ -167,8 +180,8 @@ def savedmacs():
     for i, x in enumerate(temp):
         if x.find("\n") != -1:
             # print(x)
-            savedLabel.append(tk.Label(savedWindow, text=x).grid(row=i + 2, column=0))
-            wakeButton.append(tk.Button(savedWindow, text="Wake! ",
+            saved_label.append(tk.Label(savedWindow, text=x).grid(row=i + 2, column=0))
+            wake_button.append(tk.Button(savedWindow, text="Wake! ",
                                            command=(lambda num=i, mac=x: lambda: wake(x))()
                                         ).grid(row=i + 2, column=1))
 
@@ -190,12 +203,18 @@ if not os.path.exists(path + "\\Documents\\Puter Waker"):
 main = tk.Tk(screenName="Puter Waker", baseName="Waker", className="Waker")
 main.title('Puter Waker 2.8')
 
-describe_lab = tk.Label(main, text="Enter the MAC address of the computer you want to wake").grid(row=0, columnspan=2)
+describe_lab = tk.Label(main, text="Enter the MAC address of the computer you want to wake")
+describe_lab.grid(row=0, columnspan=2)
 mac_text = tk.StringVar()
-mac_entry = tk.Label(main, text="Mac Address:").grid(row=1, column=0)
-mac_input = tk.Entry(main, textvariable=mac_text).grid(row=1, column=1)
-enter_button = tk.Button(main, text="Wake!", command=lambda: wake(mac_text.get())).grid(row=4, columnspan=2)
-arp_button = tk.Button(main, text="Display current ARP table", command=arp).grid(row=5, column=0)
-saved_button = tk.Button(main, text="Display saved devices", command=savedmacs).grid(row=5, column=1)
+mac_entry = tk.Label(main, text="Mac Address:")
+mac_entry.grid(row=1, column=0)
+mac_input = tk.Entry(main, textvariable=mac_text)
+mac_input.grid(row=1, column=1)
+enter_button = tk.Button(main, text="Wake!", command=lambda: wake(mac_text.get()))
+enter_button.grid(row=4, columnspan=2)
+arp_button = tk.Button(main, text="Display current ARP table", command=arp)
+arp_button.grid(row=5, column=0)
+saved_button = tk.Button(main, text="Display saved devices", command=savedmacs)
+saved_button.grid(row=5, column=1)
 
 tk.mainloop()
