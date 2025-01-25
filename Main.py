@@ -5,7 +5,7 @@ from that window you can send a WOL packet to any of the listed devices
 
 """
 TODO
-add hostname to the arp listings
+add hostname to the arp listings using the nbtstat -a IP command (nbtstat -a 10.0.0.15)
 """
 
 from wakeonlan import send_magic_packet
