@@ -2,6 +2,12 @@
 Press the "Display current ARP table" button to see a list of mac address your computers Arp table
 from that window you can send a WOL packet to any of the listed devices
 """
+
+"""
+TODO
+add hostname to the arp listings
+"""
+
 from wakeonlan import send_magic_packet
 from tkinter import messagebox
 import tkinter as tk
